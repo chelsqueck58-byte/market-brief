@@ -1,6 +1,3 @@
-Here's the clean final version:
-
-```python
 import anthropic
 import requests
 import os
