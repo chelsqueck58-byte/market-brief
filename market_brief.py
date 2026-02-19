@@ -38,7 +38,7 @@ def generate_brief():
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     message = client.messages.create(
         model="claude-sonnet-4-6",
-        max_tokens=4096,
+        max_tokens=800,
         tools=[
             {
                 "type": "web_search_20250305",
