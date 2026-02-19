@@ -72,4 +72,3 @@ if __name__ == "__main__":
     brief = generate_brief()
     send_telegram(brief)
     print(f"Sent at {TIMESTAMP}")
-```
