@@ -84,30 +84,18 @@ For each of AAPL, MSFT, NVDA, GOOGL, AMZN, META, TSLA:
   Monitor: App Store rankings, red packet / voucher campaigns, ecosystem integration moves
   Sources: TechNode, SCMP Tech, Dao Insights, Global Times, aibase.com
 
-### 6. COMMODITIES (if material)
-- Gold, silver, copper, oil — only if >1% move or structural story
-- Ags — only if trade-policy linked (e.g. soybean purchases, export bans)
-- Include analyst quotes with attribution (firm + analyst name)
-
-### 7. MACRO
-- Treasury yields (2Y, 10Y, 30Y) and curve shape
-- DXY, USD/CNH, USD/JPY
-- Fed speakers or minutes
-- Any central bank decisions overnight (ECB, PBOC, BOJ)
-
 ### 8. CATALYSTS TODAY
 Table format:
 | Time (HKT) | Event | Why it matters |
 Earnings, data releases, Fed speakers, HKEX deadlines, options expiry
 
 **FORMAT RULES:**
-- Lead with the single most important story in bold, one sentence
-- Use tables for multi-name comparisons
-- Specific numbers always: prices, %, bps, $B — never "rose sharply" or "fell significantly"
-- Causal chains where non-obvious: A → B → C
-- If a story has competing narratives, state both, don't pick one
-- Skip anything immaterial. Silence = nothing happened
-- End with: "Key risk today:" — one sentence, the single biggest thing that could move your book
+- Total output: 100 words maximum
+- Lead with the single most important story, one sentence
+- Bullets only, no headers, no tables
+- Numbers always: prices, %, bps — never vague language
+- Skip anything immaterial
+- End with: "Key risk:" one sentence
 
 **WHAT TO EXCLUDE:**
 - Crypto unless >5% BTC move or regulatory action
