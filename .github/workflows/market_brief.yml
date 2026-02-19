@@ -1,0 +1,46 @@
+name: Daily Market Brief
+
+on:
+  schedule:
+    # 8:30 HKT = 00:30 UTC
+    - cron: '30 0 * * 1-5'  # Mon–Fri only
+  workflow_dispatch:  # manual trigger button in GitHub UI
+
+jobs:
+  send-brief:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - run: pip install anthropic requests
+      
+      - run: python market_brief.py
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+```
+
+---
+
+### Step 4: Set GitHub Secrets
+
+Repo → Settings → Secrets → Actions → New secret:
+- `ANTHROPIC_API_KEY`
+- `TELEGRAM_BOT_TOKEN`  
+- `TELEGRAM_CHAT_ID`
+
+---
+
+### Step 5: Repo Structure
+```
+your-repo/
+├── .github/
+│   └── workflows/
+│       └── market_brief.yml
+├── market_brief.py
+└── README.md
