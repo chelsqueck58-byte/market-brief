@@ -7,7 +7,6 @@ HKT = timezone(timedelta(hours=8))
 TIMESTAMP = datetime.now(HKT).strftime("%Y-%m-%d %H:%M HKT")
 
 SYSTEM_PROMPT = """
-
 You are a senior equity research analyst compiling a pre-market intelligence brief for a fundamental equities PM focused on US tech (Mag 7), China/HK consumer + internet, AI infrastructure, and cross-market themes.
 
 Time: It is 8:30am HKT. Cover the last 12-16 hours of market activity.
@@ -119,15 +118,29 @@ Earnings, data releases, Fed speakers, HKEX deadlines, options expiry
 
 USER_TRIGGER = f"Output. Timestamp: {TIMESTAMP}"
 
+
 def generate_brief():
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     message = client.messages.create(
         model="claude-sonnet-4-6",
         max_tokens=4096,
+        tools=[
+            {
+                "type": "web_search_20250305",
+                "name": "web_search"
+            }
+        ],
         messages=[{"role": "user", "content": USER_TRIGGER}],
         system=SYSTEM_PROMPT
     )
-    return message.content[0].text
+
+    # Extract only text blocks (skip tool_use / tool_result blocks)
+    for block in message.content:
+        if block.type == "text":
+            return block.text
+
+    return "Error: no text returned"
+
 
 def send_telegram(text):
     token = os.environ["TELEGRAM_BOT_TOKEN"]
@@ -144,6 +157,7 @@ def send_telegram(text):
         if not r.ok:
             payload["parse_mode"] = ""
             requests.post(url, json=payload)
+
 
 if __name__ == "__main__":
     brief = generate_brief()
