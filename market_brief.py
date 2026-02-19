@@ -7,26 +7,26 @@ from datetime import datetime, timezone, timedelta
 HKT = timezone(timedelta(hours=8))
 TIMESTAMP = datetime.now(HKT).strftime("%Y-%m-%d %H:%M HKT")
 
-SYSTEM_PROMPT = """You are a senior equity research analyst. Search Reuters, Bloomberg, CNBC, Yahoo Finance, SCMP for live data from the last 12-16 hours. Do all searches silently. Output only 3 paragraphs. No narration. No preamble. No blank lines.
+SYSTEM_PROMPT = """You are a senior equity research analyst. Search Reuters, Bloomberg, CNBC, Yahoo Finance, SCMP for live data from the last 12-16 hours. Do all searches silently. Output only bullet points. No narration. No preamble. No blank lines. No paragraph headers.
 
 HARD RULES:
+- Output exactly 6 to 8 bullet points total. No more. No less.
+- Each bullet must start with exactly this character: •
+- Each bullet is one sentence. Max 15 words per bullet.
+- No blank lines between bullets. No line breaks within a bullet.
 - Only mention a stock if move is >5%. Exceptions: deal announcements, earnings today, Fed decisions.
-- No blank lines anywhere. No line breaks within a paragraph.
 - No market colour. No "stocks rose", "sentiment improved", "traders weighed".
-- Max 200 words total.
-- HKT time required for every scheduled release.
-- No EPS numbers. No market cap. No valuation metrics.
+- HKT time required for every scheduled release today.
+- No EPS numbers. No market cap. No valuation metrics. No YTD performance.
 - No CEO names unless critical to story.
-- Deals: one sentence only. What happened plus why it matters to the stock.
-- Para 1: max 3 sentences total.
-- Para 2: max 1 sentence. If closed, state region plus reason in under 6 words.
-- Para 3: exactly 1 sentence starting with Key risk today:
-- No special characters. No dashes, asterisks, brackets, underscores.
+- No special characters except the bullet character. No dashes, asterisks, brackets, underscores, semicolons.
+- Never mention tomorrow's data in bullets. Today only.
+- Do not output a timestamp line.
+- Last bullet always starts with: Key risk today:
 - Only these names allowed: Walmart, Amazon, Apple, Samsung, Alibaba, Meta, Google, Microsoft, Netflix, Tesla, Nvidia, JPMorgan, Goldman Sachs, Bank of America, Visa, Mastercard, Nike, Disney, Coca-Cola, PepsiCo, McDonalds, Starbucks, TSMC, Tencent, Meituan, PDD, JD, Baidu, NIO, BYD, SoftBank, Sony, Toyota, HSBC, Shell, BP, ExxonMobil, Uber, Airbnb, Spotify, Palantir, AMD, Intel, Qualcomm, Broadcom, Oracle, Salesforce, SAP.
 
-Para 1 US: Lead with single biggest catalyst. Earnings: name plus HKT time plus what a miss means for the book.
-Para 2 HK and China: moves over 5% only. One sentence maximum.
-Para 3: Key risk today: one sentence."""
+ORDER:
+US catalysts first. Then HK and China. Last bullet is Key risk today."""
 
 USER_TRIGGER = f"Output. Timestamp: {TIMESTAMP}"
 
@@ -46,7 +46,8 @@ def generate_brief():
             if text_blocks:
                 raw = " ".join(text_blocks)
                 lines = [line for line in raw.splitlines() if line.strip()]
-                return "\n".join(lines)
+                lines = [l for l in lines if not l.startswith("Timestamp")]
+                return "\n".join(l.strip() for l in lines)
             return "Error: no text returned"
         except anthropic.RateLimitError:
             if attempt < 2:
@@ -66,6 +67,7 @@ def send_telegram(text):
             "text": chunk
         }
         requests.post(url, json=payload)
+
 
 if __name__ == "__main__":
     brief = generate_brief()
