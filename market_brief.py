@@ -122,7 +122,7 @@ USER_TRIGGER = f"Output. Timestamp: {TIMESTAMP}"
 def generate_brief():
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     message = client.messages.create(
-        model="claude-sonnet-4-6",
+        model="claude-opus-4-6",
         max_tokens=4096,
         tools=[
             {
