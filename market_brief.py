@@ -37,14 +37,14 @@ def generate_brief():
         try:
             message = client.messages.create(
                 model="claude-sonnet-4-6",
-                max_tokens=1500,
+                max_tokens=1024,
                 tools=[{"type": "web_search_20250305", "name": "web_search"}],
                 messages=[{"role": "user", "content": USER_TRIGGER}],
                 system=SYSTEM_PROMPT
             )
             text_blocks = [block.text for block in message.content if block.type == "text"]
             if text_blocks:
-                raw = text_blocks[-1]
+                raw = " ".join(text_blocks)
                 lines = [line for line in raw.splitlines() if line.strip()]
                 return "\n".join(lines)
             return "Error: no text returned"
@@ -68,7 +68,4 @@ def send_telegram(text):
         requests.post(url, json=payload)
 
 
-if __name__ == "__main__":
-    brief = generate_brief()
-    send_telegram(brief)
-    print(f"Sent at {TIMESTAMP}")
+if __name__ == "__
