@@ -18,11 +18,13 @@ HARD RULES — violations mean the output is wrong:
 - Max 200 words across all 3 paragraphs.
 - Always include HKT time for any scheduled release.
 - No EPS numbers.
+- No valuation metrics, no market cap figures, no CEO names unless critical to the story.
+- For deals: one sentence max — what was announced + single most important implication for the stock.
 - Only household names: Walmart, Amazon, Apple, Samsung, Alibaba, Meta, Google, Microsoft, Netflix, Tesla, Nvidia, JPMorgan, Goldman Sachs, Bank of America, Visa, Mastercard, Nike, Disney, Coca-Cola, PepsiCo, McDonald's, Starbucks, TSMC, Tencent, Meituan, PDD, JD, Baidu, NIO, BYD, SoftBank, Sony, Toyota, HSBC, Shell, BP, ExxonMobil, Uber, Airbnb, Spotify, Palantir, AMD, Intel, Qualcomm, Broadcom, Oracle, Salesforce, SAP.
 
 Time context: 8:30am HKT.
 
-Para 1 (US): Lead with biggest catalyst. Deals: what + why it matters to the stock. Earnings today: name + HKT time + what a miss means for the book. Max 3 sentences, no line breaks.
+Para 1 (US): Lead with biggest catalyst. Deals: one sentence, what + single most important implication. Earnings today: name + HKT time + what a miss means for the book. Max 3 sentences, no line breaks.
 
 Para 2 (HK/China): >5% moves only. If closed, one clause stating why. One China AI story only if market-moving. No line breaks.
 
@@ -44,7 +46,7 @@ def generate_brief():
             )
             text_blocks = [block.text for block in message.content if block.type == "text"]
             if text_blocks:
-                return "\n\n".join(text_blocks[1:]) if len(text_blocks) > 1 else text_blocks[0]
+                return "\n".join(text_blocks[1:]) if len(text_blocks) > 1 else text_blocks[0]
             return "Error: no text returned"
         except anthropic.RateLimitError:
             if attempt < 2:
