@@ -60,7 +60,7 @@ TIER 5 — Company filings & IR (direct links):
 ### 2. MAGNIFICENT 7 TRACKER
 For each of AAPL, MSFT, NVDA, GOOGL, AMZN, META, TSLA:
 - Price, % change, any material news
-- Skip if no news (just show price/% in a compact table)
+- Skip company if no major news about company
 
 ### 3. CHINA / HK EQUITIES
 - Hang Seng, HSI Tech, CSI 300: pre-market or latest close
@@ -122,7 +122,7 @@ USER_TRIGGER = f"Output. Timestamp: {TIMESTAMP}"
 def generate_brief():
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     message = client.messages.create(
-        model="claude-opus-4-6",
+        model="claude-sonnet-4-6",
         max_tokens=4096,
         tools=[
             {
@@ -134,10 +134,15 @@ def generate_brief():
         system=SYSTEM_PROMPT
     )
 
-    # Extract only text blocks (skip tool_use / tool_result blocks)
-    for block in message.content:
-        if block.type == "text":
-            return block.text
+    # Collect all text blocks — Claude emits: preamble → tool calls → final output
+    text_blocks = [block.text for block in message.content if block.type == "text"]
+
+    if text_blocks:
+        # Skip preamble (first block), return everything after
+        if len(text_blocks) > 1:
+            return "\n\n".join(text_blocks[1:])
+        else:
+            return text_blocks[0]
 
     return "Error: no text returned"
 
