@@ -22,14 +22,3 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-```
-
----
-
-### Step 5: Final repo structure
-```
-market-brief/
-├── .github/
-│   └── workflows/
-│       └── market_brief.yml
-└── market_brief.py
