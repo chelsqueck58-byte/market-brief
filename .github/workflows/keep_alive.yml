@@ -1,0 +1,10 @@
+name: Keep Alive
+on:
+  schedule:
+    - cron: '0 12 * * 0'
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: git config user.email "action@github.com" && git config user.name "GitHub Action" && git commit --allow-empty -m "keep alive" && git push
