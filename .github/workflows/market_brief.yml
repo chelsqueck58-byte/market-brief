@@ -2,7 +2,7 @@ name: Daily Market Brief
 
 on:
   schedule:
-    - cron: '20 0 * * 1-5'
+    - cron: '20 20 * * 0-4'
   workflow_dispatch:
 
 jobs:
