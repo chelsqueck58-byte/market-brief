@@ -62,17 +62,58 @@ def generate_brief():
                 return "Rate limit hit after 3 attempts"
 
 
+def bold_keywords(text):
+    """Bold the first few words of each bullet line (up to first comma, colon, or 3 words)."""
+    lines = text.split("\n")
+    result = []
+    for line in lines:
+        if not line.startswith("•"):
+            result.append(line)
+            continue
+        body = line[1:].strip()
+        for sep in [":", ","]:
+            idx = body.find(sep)
+            if idx != -1:
+                result.append(f"• *{body[:idx].strip()}*{sep}{body[idx+1:]}")
+                break
+        else:
+            words = body.split()
+            if len(words) > 3:
+                bold_part = " ".join(words[:3])
+                rest = " ".join(words[3:])
+                result.append(f"• *{bold_part}* {rest}")
+            else:
+                result.append(f"• *{body}*")
+    return "\n".join(result)
+
+
+def sanitize_markdown(text):
+    """Escape Markdown special characters outside of *bold* markers."""
+    for ch in ["_", "`", "[", "]"]:
+        text = text.replace(ch, "\\" + ch)
+    return text
+
+
 def send_telegram(text):
     token = os.environ["TELEGRAM_BOT_TOKEN"]
     chat_id = os.environ["TELEGRAM_CHAT_ID"]
-    chunks = [text[i:i+4000] for i in range(0, len(text), 4000)]
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    formatted = bold_keywords(text)
+    sanitized = sanitize_markdown(formatted)
+    chunks = [sanitized[i:i+4000] for i in range(0, len(sanitized), 4000)]
     for chunk in chunks:
-        url = f"https://api.telegram.org/bot{token}/sendMessage"
-        payload = {
+        resp = requests.post(url, json={
             "chat_id": chat_id,
-            "text": chunk
-        }
-        requests.post(url, json=payload)
+            "text": chunk,
+            "parse_mode": "Markdown",
+        })
+        if not resp.ok:
+            plain = chunk.replace("*", "").replace("\\", "")
+            resp = requests.post(url, json={
+                "chat_id": chat_id,
+                "text": plain,
+            })
+        resp.raise_for_status()
 
 
 if __name__ == "__main__":
